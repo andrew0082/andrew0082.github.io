@@ -49,14 +49,31 @@
                 width: calc(33.33% - 20px); /* Resize pictures for iPhone */
             }
         }
+
+        .play-all-button {
+            display: block;
+            margin: 0 auto 20px; /* Center the button and add bottom margin */
+            padding: 10px 20px; /* Add padding to the button */
+            font-size: 16px; /* Increase font size */
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff; /* Blue button color */
+            color: #fff; /* White text color */
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth transition on hover */
+        }
+        .play-all-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
     </style>
 </head>
 <body>
     <h1>ㄅㄆㄇㄈ</h1>
+    <button class="play-all-button" onclick="playAllSounds()">全部播放</button>
     <div class="gallery">
         <script>
-            // Variable to store reference to currently playing audio
-            var currentAudio = null;
+            // Variable to track if playAllSounds is currently playing
+            var isPlayAllPlaying = false;
 
             // Function to create picture elements dynamically
             function createPictures() {
@@ -76,21 +93,37 @@
             }
 
             // Function to play sound when a picture is clicked
-	function playSound(pictureNumber) {
-	    // Stop any currently playing audio
-	    if (currentAudio !== null) {
-		currentAudio.pause();
-		currentAudio.currentTime = 0;
-	    }
+            function playSound(pictureNumber) {
+                // Stop any currently playing audio
+                var audio = new Audio('sound/sound' + pictureNumber + '.m4a');
+                audio.play();
+                // If playAllSounds is currently playing, set isPlayAllPlaying to false
+                if (isPlayAllPlaying) {
+                    isPlayAllPlaying = false;
+                }
+            }
 
-	    var audio = new Audio('sound/sound' + pictureNumber + '.m4a');
-	    currentAudio = audio;
+            // Function to play all sounds in sequence
+            function playAllSounds() {
+                // If playAllSounds is already playing, return
+                if (isPlayAllPlaying) {
+                    return;
+                }
+                isPlayAllPlaying = true;
+                var index = 1;
+                playSoundSequentially();
 
-	    // Play audio only in response to user interaction
-	    document.addEventListener("click", function() {
-		currentAudio.play();
-	    }, { once: true });
-	}
+                function playSoundSequentially() {
+                    if (index <= 37 && isPlayAllPlaying) {
+                        var audio = new Audio('sound/sound' + index + '.m4a');
+                        audio.play();
+                        audio.onended = function() {
+                            index++;
+                            playSoundSequentially();
+                        };
+                    }
+                }
+            }
 
             // Call the function to create pictures when the page loads
             window.onload = createPictures;
