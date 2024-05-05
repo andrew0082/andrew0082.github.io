@@ -76,19 +76,21 @@
             }
 
             // Function to play sound when a picture is clicked
-            function playSound(pictureNumber) {
-                // Stop any currently playing audio
-                if (currentAudio !== null) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
+	function playSound(pictureNumber) {
+	    // Stop any currently playing audio
+	    if (currentAudio !== null) {
+		currentAudio.pause();
+		currentAudio.currentTime = 0;
+	    }
 
-                var audio = new Audio('sound/sound' + pictureNumber + '.mp3');
-                audio.play();
+	    var audio = new Audio('sound/sound' + pictureNumber + '.mp3');
+	    currentAudio = audio;
 
-                // Set the currently playing audio
-                currentAudio = audio;
-            }
+	    // Play audio only in response to user interaction
+	    document.addEventListener("click", function() {
+		currentAudio.play();
+	    }, { once: true });
+	}
 
             // Call the function to create pictures when the page loads
             window.onload = createPictures;
