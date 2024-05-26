@@ -3,131 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Picture Gallery</title>
+    <title>Picture Viewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        body, html {
             margin: 0;
-            padding: 20px; /* Add padding for better spacing */
-            background-color: #f4f4f4; /* Add background color */
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px; /* Add margin to separate from gallery */
-            color: #333; /* Darken heading color */
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .picture {
-            width: calc(16.66% - 20px); /* Resize pictures for better layout */
-            margin: 10px;
-            cursor: pointer;
-            border-radius: 8px; /* Add border radius for rounded corners */
-            overflow: hidden; /* Hide overflowing content (for rounded corners) */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
-            transition: transform 0.2s; /* Add transition for smooth hover effect */
-        }
-        .picture:hover {
-            transform: translateY(-5px); /* Lift up the picture on hover */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add stronger shadow on hover */
-        }
-        .picture img {
+            padding: 0;
             width: 100%;
-            height: auto;
-            transition: transform 0.2s; /* Add smooth transition effect */
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
         }
-        .picture:hover img {
-            transform: scale(1.1); /* Scale up image on hover */
+        .container {
+            position: relative;
+            width: 80%;
+            height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        /* Media query for responsive layout */
-        @media only screen and (max-width: 767px) {
-            .picture {
-                width: calc(33.33% - 20px); /* Resize pictures for iPhone */
-            }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            height: 500px; /* Set the height of all images */
+            object-fit: contain; /* Maintain aspect ratio */
         }
-
-        .play-all-button {
-            display: block;
-            margin: 0 auto 20px; /* Center the button and add bottom margin */
-            padding: 10px 20px; /* Add padding to the button */
-            font-size: 16px; /* Increase font size */
+        .caption {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-size: 24px; /* Adjust this value to change the font size */
+        }
+        .buttons {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 20px;
+            cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #007bff; /* Blue button color */
-            color: #fff; /* White text color */
-            cursor: pointer;
-            transition: background-color 0.3s; /* Smooth transition on hover */
-        }
-        .play-all-button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
         }
     </style>
 </head>
 <body>
-    <h1>ㄅㄆㄇㄈ</h1>
-    <button class="play-all-button" onclick="playAllSounds()">全部播放</button>
-    <div class="gallery">
-        <script>
-            // Variable to track if playAllSounds is currently playing
-            var isPlayAllPlaying = false;
 
-            // Function to create picture elements dynamically
-            function createPictures() {
-                var container = document.querySelector('.gallery');
-                for (var i = 1; i <= 37; i++) {
-                    var pictureDiv = document.createElement('div');
-                    pictureDiv.className = 'picture';
-                    pictureDiv.setAttribute('onclick', 'playSound(' + i + ')');
-
-                    var img = document.createElement('img');
-                    img.src = 'pic/pic' + i + '.png';
-                    img.alt = 'Picture ' + i;
-
-                    pictureDiv.appendChild(img);
-                    container.appendChild(pictureDiv);
-                }
-            }
-
-            // Function to play sound when a picture is clicked
-            function playSound(pictureNumber) {
-                // Stop any currently playing audio
-                var audio = new Audio('sound/sound' + pictureNumber + '.m4a');
-                audio.play();
-                // If playAllSounds is currently playing, set isPlayAllPlaying to false
-                if (isPlayAllPlaying) {
-                    isPlayAllPlaying = false;
-                }
-            }
-
-            // Function to play all sounds in sequence
-            function playAllSounds() {
-                // If playAllSounds is already playing, return
-                if (isPlayAllPlaying) {
-                    return;
-                }
-                isPlayAllPlaying = true;
-                var index = 1;
-                playSoundSequentially();
-
-                function playSoundSequentially() {
-                    if (index <= 37 && isPlayAllPlaying) {
-                        var audio = new Audio('sound/sound' + index + '.m4a');
-                        audio.play();
-                        audio.onended = function() {
-                            index++;
-                            playSoundSequentially();
-                        };
-                    }
-                }
-            }
-
-            // Call the function to create pictures when the page loads
-            window.onload = createPictures;
-        </script>
+<div class="container">
+    <img id="picture" src="" alt="Picture">
+    <div id="caption" class="caption"></div>
+    <div class="buttons">
+        <button onclick="prevPicture()"><i class="fas fa-arrow-left"></i></button>
+        <button onclick="nextPicture()"><i class="fas fa-arrow-right"></i></button>
+        <button onclick="toggleCaption()"><i class="fas fa-info"></i></button>
+        <button onclick="playSound()"><i class="fas fa-play"></i></button>
+        <button onclick="flushPicture()"><i class="fas fa-random"></i></button>
     </div>
+</div>
+<script>
+    let mediaData = []; // Store objects containing picture, caption, and sound
+    const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
+    const totalPictures = 26; // Adjust the number of pictures you have
+    let currentIndex = 0;
+
+    const pictureElement = document.getElementById('picture');
+    const captionElement = document.getElementById('caption');
+
+    function updatePicture() {
+        if (mediaData.length > 0) {
+            const currentMedia = mediaData[currentIndex];
+            pictureElement.src = currentMedia.picture;
+            captionElement.innerText = currentMedia.caption;
+            captionElement.style.display = 'none';
+        }
+    }
+
+    function nextPicture() {
+        currentIndex = (currentIndex + 1) % mediaData.length;
+        updatePicture();
+    }
+
+    function prevPicture() {
+        currentIndex = (currentIndex - 1 + mediaData.length) % mediaData.length;
+        updatePicture();
+    }
+
+    function toggleCaption() {
+        if (captionElement.style.display === 'none') {
+            captionElement.style.display = 'block';
+        } else {
+            captionElement.style.display = 'none';
+        }
+    }
+
+    function playSound() {
+        const currentMedia = mediaData[currentIndex];
+        const audio = new Audio(currentMedia.sound);
+        audio.play();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function flushPicture() {
+        shuffleArray(mediaData);
+        currentIndex = 0;
+        updatePicture();
+    }
+
+    function checkImageExists(src, callback) {
+        const img = new Image();
+        img.onload = () => callback(true);
+        img.onerror = () => callback(false);
+        img.src = src;
+    }
+
+    function loadCaptions() {
+        return fetch('caption.txt')
+            .then(response => response.text())
+            .then(data => {
+                return data.split('\n').map(line => line.trim());
+            });
+    }
+
+    function loadPictures() {
+        loadCaptions().then(captionsData => {
+            let loadedCount = 0;
+            for (let i = 0; i < totalPictures; i++) {
+                const baseFilePath = `./pic/pic${i + 1}`;
+                let found = false;
+                for (let ext of extensions) {
+                    const filePath = `${baseFilePath}${ext}`;
+                    checkImageExists(filePath, (exists) => {
+                        if (exists && !found) {
+                            mediaData.push({
+                                picture: filePath,
+                                caption: captionsData[i], // assuming captionsData and pictures match
+                                sound: `./sound/sound${i + 1}.m4a`
+                            });
+                            if (mediaData.length === 1) {
+                                updatePicture();
+                            }
+                            found = true;
+                        }
+                        loadedCount++;
+                        if (loadedCount === totalPictures * extensions.length && mediaData.length === 0) {
+                            console.error('No images found.');
+                        }
+                    });
+                    if (found) break;
+                }
+            }
+        }).catch(error => console.error('Error loading captions:', error));
+    }
+
+    window.onload = loadPictures;
+</script>
+
 </body>
 </html>
