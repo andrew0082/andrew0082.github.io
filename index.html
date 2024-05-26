@@ -160,6 +160,7 @@
         playSound(); // Play the sound associated with the picture
         timer = setTimeout(() => {
             nextPicture(); // Move to the next picture after 3 seconds
+            playSound(); // Play the sound associated with the picture
             if (isPlaying) {
                 playNextPicture(); // Continue playing next picture if autoplay is still active
             }
