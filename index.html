@@ -71,8 +71,13 @@
     <div class="buttons">
         <button onclick="prevPicture()"><i class="fas fa-arrow-left"></i></button>
         <button onclick="toggleCaption()"><i class="fas fa-info"></i></button>
-        <button onclick="playSound()"><i class="fas fa-play"></i></button>
+        <button onclick="playSound()"><i class="fas fa-volume-up""></i></button>
         <button onclick="flushPicture()"><i class="fas fa-random"></i></button>
+
+        <button id="playButton" onclick="playFor3Seconds()">
+            <i id="playIcon" class="fas fa-play"></i>
+            <i id="pauseIcon" class="fas fa-pause" style="display: none;"></i>
+        </button>
         <button onclick="nextPicture()"><i class="fas fa-arrow-right"></i></button>
     </div>
 </div>
@@ -131,6 +136,35 @@
         updatePicture();
     }
 
+    let timer; // Global variable to store the timer
+    let isPlaying = false; // Flag to track if autoplay is active
+    
+    function playFor3Seconds() {
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        
+        if (!isPlaying) {
+            isPlaying = true; // Set flag to true to indicate autoplay is active
+            playIcon.style.display = 'none'; // Hide play icon
+            pauseIcon.style.display = 'inline-block'; // Show pause icon
+            playNextPicture(); // Start playing pictures
+        } else {
+            clearTimeout(timer); // Stop autoplay if button is pressed again
+            isPlaying = false;
+            playIcon.style.display = 'inline-block'; // Show play icon
+            pauseIcon.style.display = 'none'; // Hide pause icon
+        }
+    }
+    
+    function playNextPicture() {
+        playSound(); // Play the sound associated with the picture
+        timer = setTimeout(() => {
+            nextPicture(); // Move to the next picture after 3 seconds
+            if (isPlaying) {
+                playNextPicture(); // Continue playing next picture if autoplay is still active
+            }
+        }, 3000);
+    }
     function checkImageExists(src, callback) {
         const img = new Image();
         img.onload = () => callback(true);
