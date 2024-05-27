@@ -1,2 +1,1 @@
-# lang
-Speech Therapy for Aphasia
+# Aphasia therapy
