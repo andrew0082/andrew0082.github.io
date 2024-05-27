@@ -132,8 +132,9 @@
     }
 
     function flushPicture() {
-        shuffleArray(mediaData);
-        currentIndex = 0;
+        <!-- shuffleArray(mediaData); -->
+        const random_num = Math.floor(Math.random() * (totalPictures - 1));
+        currentIndex = random_num;
         updatePicture();
     }
 
