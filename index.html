@@ -84,7 +84,7 @@
 <script>
     let mediaData = []; // Store objects containing picture, caption, and sound
     const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
-    const totalPictures = 26; // Adjust the number of pictures you have
+    const totalPictures = 1; // Adjust the number of pictures you have
     let currentIndex = 0;
 
     const pictureElement = document.getElementById('picture');
@@ -118,6 +118,7 @@
     }
 
     function playSound() {
+        console.log(`current index = ${mediaData[currentIndex]['sound']}\n`)
         const currentMedia = mediaData[currentIndex];
         const audio = new Audio(currentMedia.sound);
         audio.play();
@@ -196,6 +197,7 @@
                                 caption: captionsData[i], // assuming captionsData and pictures match
                                 sound: `./sound/sound${i + 1}.m4a`
                             });
+                            console.log(`./sound/sound${i + 1}.m4a\n`)
                             if (mediaData.length === 1) {
                                 updatePicture();
                             }
