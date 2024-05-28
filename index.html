@@ -29,6 +29,7 @@
             max-height: 100%;
             height: 500px; /* Set the height of all images */
             object-fit: contain; /* Maintain aspect ratio */
+            cursor: pointer;
         }
         .caption {
             position: absolute;
@@ -40,7 +41,7 @@
             padding: 10px;
             border-radius: 5px;
             display: none;
-            font-size: 60px; /* Adjust this value to change the font size */
+            font-size: 24px; /* Adjust this value to change the font size */
         }
         .buttons {
             position: absolute;
@@ -65,22 +66,15 @@
 </head>
 <body>
 
-<div class="container">
-    <img id="picture" src="" alt="Picture">
+<div class="container" id="container">
+    <img id="picture" src="" alt="Picture" onclick="toggleCaption()">
     <div id="caption" class="caption"></div>
     <div class="buttons">
-        <button onclick="prevPicture()"><i class="fas fa-arrow-left"></i></button>
-        <button onclick="toggleCaption()"><i class="fas fa-info"></i></button>
-        <button onclick="playSound()"><i class="fas fa-volume-up""></i></button>
-        <!-- <button onclick="flushPicture()"><i class="fas fa-random"></i></button> -->
-
-        <!-- <button id="playButton" onclick="playFor3Seconds()">
-            <i id="playIcon" class="fas fa-play"></i>
-            <i id="pauseIcon" class="fas fa-pause" style="display: none;"></i>
-        </button> -->
-        <button onclick="nextPicture()"><i class="fas fa-arrow-right"></i></button>
+        <button onclick="playSound()"><i class="fas fa-play"></i></button>
+        <button onclick="flushPicture()"><i class="fas fa-random"></i></button>
     </div>
 </div>
+
 <script>
     let mediaData = []; // Store objects containing picture, caption, and sound
     const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
@@ -89,6 +83,7 @@
 
     const pictureElement = document.getElementById('picture');
     const captionElement = document.getElementById('caption');
+    const container = document.getElementById('container');
 
     function updatePicture() {
         if (mediaData.length > 0) {
@@ -109,65 +104,18 @@
         updatePicture();
     }
 
-    function toggleCaption() {
-        if (captionElement.style.display === 'none') {
-            captionElement.style.display = 'block';
-        } else {
-            captionElement.style.display = 'none';
-        }
-    }
-
     function playSound() {
-        console.log(`current index = ${mediaData[currentIndex]['sound']}\n`)
         const currentMedia = mediaData[currentIndex];
         const audio = new Audio(currentMedia.sound);
         audio.play();
     }
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
 
     function flushPicture() {
-        <!-- shuffleArray(mediaData); -->
-        const random_num = Math.floor(Math.random() * (totalPictures - 1));
-        currentIndex = random_num;
+        currentIndex = Math.floor(Math.random() * (totalPictures - 1));;
         updatePicture();
     }
 
-    let timer; // Global variable to store the timer
-    let isPlaying = false; // Flag to track if autoplay is active
-    
-    function playFor3Seconds() {
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        
-        if (!isPlaying) {
-            isPlaying = true; // Set flag to true to indicate autoplay is active
-            playIcon.style.display = 'none'; // Hide play icon
-            pauseIcon.style.display = 'inline-block'; // Show pause icon
-            playNextPicture(); // Start playing pictures
-        } else {
-            clearTimeout(timer); // Stop autoplay if button is pressed again
-            isPlaying = false;
-            playIcon.style.display = 'inline-block'; // Show play icon
-            pauseIcon.style.display = 'none'; // Hide pause icon
-        }
-    }
-    
-    function playNextPicture() {
-        playSound(); // Play the sound associated with the picture
-        timer = setTimeout(() => {
-            nextPicture(); // Move to the next picture after 3 seconds
-            playSound(); // Play the sound associated with the picture
-            if (isPlaying) {
-                playNextPicture(); // Continue playing next picture if autoplay is still active
-            }
-        }, 3000);
-    }
     function checkImageExists(src, callback) {
         const img = new Image();
         img.onload = () => callback(true);
@@ -198,7 +146,6 @@
                                 caption: captionsData[i], // assuming captionsData and pictures match
                                 sound: `./sound/sound${i + 1}.m4a`
                             });
-                            console.log(`./sound/sound${i + 1}.m4a\n`)
                             if (mediaData.length === 1) {
                                 updatePicture();
                             }
@@ -213,6 +160,39 @@
                 }
             }
         }).catch(error => console.error('Error loading captions:', error));
+    }
+
+    let startX = 0;
+    container.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    container.addEventListener('touchmove', (e) => {
+        if (!startX) return;
+        const endX = e.touches[0].clientX;
+        if (startX - endX > 50) {
+            nextPicture();
+            startX = 0;
+        } else if (endX - startX > 50) {
+            prevPicture();
+            startX = 0;
+        }
+    });
+
+    container.addEventListener('wheel', (e) => {
+        if (e.deltaX > 0 || e.deltaY > 0) {
+            nextPicture();
+        } else if (e.deltaX < 0 || e.deltaY < 0) {
+            prevPicture();
+        }
+    });
+
+    function toggleCaption() {
+        if (captionElement.style.display === 'none') {
+            captionElement.style.display = 'block';
+        } else {
+            captionElement.style.display = 'none';
+        }
     }
 
     window.onload = loadPictures;
